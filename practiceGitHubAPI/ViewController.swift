@@ -16,14 +16,14 @@ class ViewController: UIViewController {
     @IBOutlet weak var orderSegmentedControl: UISegmentedControl!
     
     private var articles = [Article]()
-    private var array: [String] = ["q", "stars", "desc"]
-    
+    private var params = ["q", "stars", "desc"]
+    let articleCell = "articleCell"
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         let articleNib = UINib(nibName: "ArticleTableViewCell", bundle: nil)
-        tableView.registerNib(articleNib, forCellReuseIdentifier: "articleCell")
+        tableView.registerNib(articleNib, forCellReuseIdentifier: articleCell)
         
         tableView.estimatedRowHeight = 120
         tableView.rowHeight = UITableViewAutomaticDimension
@@ -40,7 +40,7 @@ class ViewController: UIViewController {
     }
     
     func getData() {
-        ArticleManager.sharedInstance.getArticles(array) { [weak self] articles in
+        ArticleManager.sharedInstance.getArticles(params) { [weak self] articles in
             guard let me = self else { return }
             
             me.articles = articles
@@ -50,7 +50,7 @@ class ViewController: UIViewController {
     
     //サーチバー更新時
     func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-        array[0] = searchText
+        params[0] = searchText
         getData()
     }
     
@@ -59,13 +59,13 @@ class ViewController: UIViewController {
         switch sortSegmentedControl.selectedSegmentIndex {
         case 0:
             print("stars選択")
-            array[1] = "stars"
+            params[1] = "stars"
         case 1:
             print("forks選択")
-            array[1] = "forks"
+            params[1] = "forks"
         case 2:
             print("updated選択")
-            array[1] = "updated"
+            params[1] = "updated"
         default:
             print("Error")
         }
@@ -76,10 +76,10 @@ class ViewController: UIViewController {
         switch orderSegmentedControl.selectedSegmentIndex {
         case 0:
             print("desc選択")
-            array[2] = "desc"
+            params[2] = "desc"
         case 1:
             print("asc選択")
-            array[2] = "asc"
+            params[2] = "asc"
         default:
             print("Error")
         }
@@ -92,7 +92,7 @@ class ViewController: UIViewController {
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 
-        let cell = tableView.dequeueReusableCellWithIdentifier("articleCell") as! ArticleTableViewCell
+        let cell = tableView.dequeueReusableCellWithIdentifier(articleCell) as! ArticleTableViewCell
         cell.nameLabel.text = articles[indexPath.row].name
         cell.ownerLabel.text = "user: " + articles[indexPath.row].owner
         cell.descriptionLabel.text = articles[indexPath.row].description

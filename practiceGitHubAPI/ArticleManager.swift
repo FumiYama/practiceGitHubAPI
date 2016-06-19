@@ -13,17 +13,15 @@ import SwiftyJSON
 class ArticleManager {
     static let sharedInstance = ArticleManager()
     
-    func getArticles(array: [String], callBackClosure: ([Article]) -> ()) {
+    func getArticles(params: [String], callBackClosure: ([Article]) -> ()) {
         var articles = [Article]()
         
-        let urlString: String = "https://api.github.com/search/repositories?q=\(array[0])+language:assembly&sort=\(array[1])&order=\(array[2])"
+        let urlString = "https://api.github.com/search/repositories?q=\(params.first!)+language:assembly&sort=\(params[1])&order=\(params.last!)"
 
         Alamofire.request(.GET, urlString).responseJSON { response in
-            guard let object = response.result.value!["items"] else { return }
-            
-            let json = JSON(object!)
+            guard let responseValue = response.result.value else { return }
+            let json = JSON(responseValue)["items"]
             json.forEach { (_, json) in
-                
                 guard let name = json["name"].string,
                     let owner = json["owner"]["login"].string,
                     let url = json["html_url"].string,
